@@ -7,19 +7,20 @@ import unittest
 
 MAX_WAIT = 10
 
+
 class NewVisitorTest(LiveServerTestCase):
-    '''тест нового посетителя'''
+    """тест нового посетителя"""
 
     def setUp(self):
-        '''установка'''
+        """установка"""
         self.browser = webdriver.Firefox()
 
     def tearDown(self):
-        '''демонтаж'''
+        """демонтаж"""
         self.browser.quit()
 
     def wait_for_row_in_list_table(self, row_text):
-        '''ожидать строку в таблице списка'''
+        """ожидать строку в таблице списка"""
         start_time = time.time()
         while True:
             try:
@@ -33,7 +34,7 @@ class NewVisitorTest(LiveServerTestCase):
                 time.sleep(0.5)
 
     def test_can_start_a_list_for_one_user(self):
-        '''тест: можно начать список для одного пользователя'''
+        """тест: можно начать список для одного пользователя"""
         # Эдит слышала про крутое новое онлайн-приложение 
         # со списком неотложных дел. Она решает оценить его 
         # домашнюю страницу
@@ -77,7 +78,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Удовлетворенная, она снова ложится спать.
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
-        '''тест: многочисленные пользователи могут начать списки по разным url'''
+        """тест: многочисленные пользователи могут начать списки по разным url"""
         # Эдит начинае новый список
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element_by_id('id_new_item')
@@ -100,7 +101,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Фрэнсис посещает домашнюю страницу. Нет никаких признаков
         # списка Эдит
         self.browser.get(self.live_server_url)
-        page_text = self.browser.find_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Купить павлиньи перья', page_text)
         self.assertNotIn('Сделать мушку', page_text)
 
@@ -108,7 +109,7 @@ class NewVisitorTest(LiveServerTestCase):
         # интересен, чем список Эдит...
         inputbox = self.body.find_element_by_id('id_new_item')
         inputbox.send_keys('Купить молоко')
-        inputbox.send_keys(ENTER)
+        inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Купить молоко')
 
         # Френсис получает уникальный URL-адрес
@@ -120,6 +121,8 @@ class NewVisitorTest(LiveServerTestCase):
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Купить павлиньи перья', page_text)
         self.assertIn('Купить молоко', page_text)
+
+        # Удовлетворенные, оба ложаться спать
 
         # Эдит интересно, запомнит ли сайт ее список. Далее она видит, 
         # что сайт сгенерировал для нее уникальны URL-адрес - об этом 
