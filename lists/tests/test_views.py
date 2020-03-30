@@ -1,23 +1,12 @@
 from django.test import TestCase
-from .models import Item
-
-from lists.views import home_page
 from lists.models import Item, List
-
-class HomePageTest(TestCase):
-    """тест домашней страницы"""
-
-    def test_used_home_template(self):
-        """тест: используется домашний шаблон"""
-        response = self.client.get('/')
-        self.assertTemplateUsed(response, 'home.html')
 
 
 class ListAndItemModelTest(TestCase):
-    '''тест модели элемента списка'''
+    """тест модели элемента списка"""
 
     def test_saving_and_retrieving_items(self):
-        '''тест сохранения и получения элементов списка'''
+        """тест сохранения и получения элементов списка"""
         list_ = List()
         list_.save()
         first_item = Item()
