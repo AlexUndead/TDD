@@ -8,7 +8,11 @@ class List(models.Model):
         """получить асолютный url"""
         return reverse('view_list', args=[self.id])
 
+
 class Item(models.Model):
     """элемент списка"""
     text = models.TextField(default='')
     list = models.ForeignKey(List, default=None, on_delete=models.SET_DEFAULT)
+
+    class Meta:
+        unique_together = ('list', 'text')
