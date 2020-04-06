@@ -1,3 +1,4 @@
+import time
 from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
 
@@ -66,7 +67,7 @@ class ItemValidationTest(FunctionalTest):
             "You've already got this in your list"
         ))
 
-    def test_error_messages_are_cleared_in_input(self):
+    def test_error_messages_are_cleared_on_input(self):
         """тест: сообщение об ошибках очищаются при вводе"""
         # Эдит начинает список и вызывает ошибку валидации:
         self.browser.get(self.live_server_url)
