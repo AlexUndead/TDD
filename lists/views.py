@@ -1,27 +1,32 @@
 from django.shortcuts import render, redirect
+from lists.forms import ItemForm, ExistingListItemForm
 from lists.models import Item, List
+from django.core.exceptions import ValidationError
 
 
 def home_page(request):
     """домашняя страница"""
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'form': ItemForm()})
 
 
 def view_list(request, list_id):
     """представление списка"""
     list_ = List.objects.get(id=list_id)
-    return render(request, 'list.html', {'list': list_})
+    form = ExistingListItemForm(for_list=list_)
+    if request.method == 'POST':
+        form = ExistingListItemForm(for_list=list_, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(list_)
+    return render(request, 'list.html', {'list': list_, "form": form})
 
 
 def new_list(request):
     """новый список"""
-    list_ = List.objects.create()
-    Item.objects.create(text=request.POST['item_text'], list=list_)
-    return redirect(f'/lists/{list_.id}/')
-
-
-def add_item(request, list_id):
-    """добавить элемент"""
-    list_ = List.objects.get(id=list_id)
-    Item.objects.create(text=request.POST['item_text'], list=list_)
-    return redirect(f'/lists/{list_.id}/')
+    form = ItemForm(data=request.POST)
+    if form.is_valid():
+        list_ = List.objects.create()
+        Item.objects.create(text=request.POST['text'], list=list_)
+        return redirect(list_)
+    else:
+        return render(request, 'home.html', {"form": form})
