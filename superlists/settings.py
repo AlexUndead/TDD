@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lists',
+    'accounts',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,3 +123,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '../static'))
+
+#EMAIL_HOST = 'smtp.yandex.ru'
+#EMAIL_HOST_USER = 'AlexUndead1992'
+#EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+#EMAIL_PORT = 465
+#EMAIL_USE_TLS = True
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
