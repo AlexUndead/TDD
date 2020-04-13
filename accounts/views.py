@@ -1,7 +1,8 @@
+import sys
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from django.contrib import messages
+from django.contrib import messages, auth
 from accounts.models import Token
 
 
@@ -28,4 +29,11 @@ def send_login_email(request):
 
 
 def login(request):
+    """зарегистрировать вход в систему"""
+    user = auth.authenticate(uid=request.GET.get('token'))
+    # print('login view', file=sys.stderr)
+    # uid = request.GET.get('uid')
+    # user = auth.authenticate(uid=uid)
+    if user is not None:
+        auth.login(request, user)
     return redirect('/')
