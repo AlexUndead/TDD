@@ -1,10 +1,15 @@
 from django.core import mail
+from django.conf import settings
 from selenium.webdriver.common.keys import Keys
 import re
+import os
+import poplib
+import time
 
 from .base import FunctionalTest
 
-TEST_EMAIL = 'Alex_Undead_92@bk.ru'
+TEST_EMAIL = settings.EMAIL_TEST_YANDEX_USER
+TEST_PASSWORD = settings.EMAIL_TEST_YANDEX_PASSWORD
 SUBJECT = 'Your login link for Superlists'
 
 
@@ -28,15 +33,13 @@ class LoginTest(FunctionalTest):
         ))
 
         # Эдит проверяет свою почту и находит сообщение
-        email = mail.outbox[0]
-        self.assertIn(TEST_EMAIL, email.to)
-        self.assertEqual(email.subject, SUBJECT)
+        body = self.wait_for_email(TEST_EMAIL, SUBJECT)
 
         # Оно содержит ссылку на url-адрес
-        self.assertIn('Use this link to log in', email.body)
-        url_search = re.search(r'http://.+/.+$', email.body)
+        self.assertIn('Use this link to log in', body)
+        url_search = re.search(r'http://.+/.+$', body)
         if not url_search:
-            self.fail(f'Could not find url in email body:\n{email.body}')
+            self.fail(f'Could not find url in email body:\n{body}')
         url = url_search.group(0)
         self.assertIn(self.live_server_url, url)
 
@@ -51,3 +54,34 @@ class LoginTest(FunctionalTest):
 
         # Она вышла из системы
         self.wait_to_be_logged_out(email=TEST_EMAIL)
+
+    def wait_for_email(self, test_email, subject):
+        """ожидать электронное сообщение"""
+        if not self.staging_server:
+            email = mail.outbox[0]
+            self.assertIn(test_email, email.to)
+            self.assertEqual(email.subject, subject)
+            return email.body
+
+        email_id = None
+        start = time.time()
+        inbox = poplib.POP3_SSL('pop.yandex.ru')
+        try:
+            inbox.user(TEST_EMAIL)
+            inbox.pass_(TEST_PASSWORD)
+            while time.time() - start < 5:
+                # получить 10 самых новых сообщений
+                count, _ = inbox.stat()
+                for i in reversed(range(max(1, count - 10), count + 1)):
+                    print('getting msg', i)
+                    _, lines, __ = inbox.retr(i)
+                    lines = [l.decode('utf8') for l in lines]
+                    if f'Subject: {subject}' in lines:
+                        email_id = i
+                        body = '\n'.join(lines)
+                        return body
+                time.sleep(5)
+        finally:
+            if email_id:
+                inbox.dele(email_id)
+            inbox.quit()

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'lists',
     'accounts',
+    'functional_tests',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -140,6 +141,10 @@ EMAIL_HOST_USER = 'AlexUndead1992@yandex.ru'
 EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+#TEST EMAIL
+EMAIL_TEST_YANDEX_USER = env('EMAIL_TEST_YANDEX_USER')
+EMAIL_TEST_YANDEX_PASSWORD = env('EMAIL_TEST_YANDEX_PASSWORD')
 
 #EMAIL_HOST = 'localhost'
 #EMAIL_PORT = 1025
