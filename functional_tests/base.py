@@ -27,7 +27,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         """установка"""
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Chrome('/var/www/html/Projects/selenium-drivers/chrome/80/chromedriver')
         self.staging_server = os.environ.get('STAGING_SERVER')
         if self.staging_server:
             self.live_server_url = 'http://' + self.staging_server
