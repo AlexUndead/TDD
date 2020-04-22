@@ -13,12 +13,13 @@ def view_list(request, list_id):
     """представление списка"""
     list_ = List.objects.get(id=list_id)
     form = ExistingListItemForm(for_list=list_)
+    list_items = Item.objects.filter(list_id=list_.id).order_by('id')
     if request.method == 'POST':
         form = ExistingListItemForm(for_list=list_, data=request.POST)
         if form.is_valid():
             form.save()
             return redirect(list_)
-    return render(request, 'list.html', {'list': list_, "form": form})
+    return render(request, 'list.html', {'list': list_, 'list_items': list_items, "form": form})
 
 
 def new_list(request):
@@ -30,3 +31,7 @@ def new_list(request):
         return redirect(list_)
     else:
         return render(request, 'home.html', {"form": form})
+
+
+def my_lists(request, email):
+    return render(request, 'my_lists.html')

@@ -72,7 +72,7 @@ class LoginTest(FunctionalTest):
             while time.time() - start < 5:
                 # получить 10 самых новых сообщений
                 count, _ = inbox.stat()
-                for i in reversed(range(max(1, count - 10), count + 1)):
+                for i in range(max(1, count - 10), count + 1):
                     print('getting msg', i)
                     _, lines, __ = inbox.retr(i)
                     lines = [l.decode('utf8') for l in lines]
